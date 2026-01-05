@@ -32,40 +32,42 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     cursor: pointer;
     z-index: 3;
+    text-align: center;
+    padding: 20px;
   }
 
   @keyframes pulse {
     50% { transform: scale(1.05); }
   }
 
-  /* 💌 MESSAGE BOX (FIXED SIZE) */
+  /* 💌 MESSAGE BOX — FIXED SIZE */
   .message {
     display: none;
     background: white;
     width: 90%;
     max-width: 380px;
-    height: 320px;            /* 🔒 FIXED HEIGHT */
-    padding: 18px;
+    height: 320px;                /* 🔒 stays small */
+    padding: 16px;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     color: #111;
-    line-height: 1.6;
     z-index: 3;
     display: flex;
     flex-direction: column;
+    overflow: hidden;             /* 🚫 no extension */
   }
 
   h1 {
     color: #ff2e63;
     text-align: center;
     font-size: 1.4rem;
-    margin: 5px 0;
+    margin: 4px 0;
   }
 
   .cake-symbol {
     text-align: center;
     font-size: 2rem;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   /* 📜 SCROLLING MESSAGE AREA */
@@ -74,28 +76,11 @@
     overflow-y: auto;
     padding-right: 6px;
     font-size: 0.95rem;
+    line-height: 1.6;
   }
 
   #textMessage p {
     margin-bottom: 12px;
-  }
-
-  /* 🎆 REAL FIREWORKS */
-  .firework {
-    position: fixed;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    pointer-events: none;
-    animation: firework 1.2s ease-out forwards;
-    z-index: 1;
-  }
-
-  @keyframes firework {
-    to {
-      transform: translate(var(--x), var(--y));
-      opacity: 0;
-    }
   }
 
   /* 🎊 CONFETTI */
@@ -103,16 +88,59 @@
     position: fixed;
     width: 8px;
     height: 8px;
-    animation: confetti 1.8s ease-out forwards;
+    top: 50%;
+    left: 50%;
+    animation: confettiFall 1.8s ease-out forwards;
     pointer-events: none;
     z-index: 1;
   }
 
-  @keyframes confetti {
+  @keyframes confettiFall {
     to {
-      transform: translate(var(--cx), var(--cy)) rotate(720deg);
+      transform: translate(var(--x), var(--y)) rotate(720deg);
       opacity: 0;
     }
+  }
+
+  /* 🎆 REAL CIRCULAR FIREWORKS */
+  .firework {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: firework 1.2s ease-out forwards;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes firework {
+    to {
+      transform: translate(var(--dx), var(--dy));
+      opacity: 0;
+    }
+  }
+
+  /* ❤️ FALLING HEARTS & FLOWERS */
+  .falling {
+    position: fixed;
+    top: -40px;
+    font-size: 20px;
+    animation: fall linear forwards;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(110dvh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* 📱 MOBILE */
+  @media (max-width: 480px) {
+    .message { height: 300px; }
+    h1 { font-size: 1.3rem; }
   }
 </style>
 </head>
@@ -141,8 +169,8 @@ const TYPE_SPEED = 55;
 const LINE_DELAY = 1200;
 
 const lines = [
-  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life.",
-  "I love the moments we play games together, sing our favorite songs, and even the quiet times. No matter what, I’ll always be here for you.",
+  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life. I truly see you for who you are—the greatest cricket player, the best badminton player, the most sarcastic and funniest guy ever, and the strongest person I know who handles everything with a smile.",
+  "I love the moments we play games together, sing our favorite songs, and even the quiet times when we don’t have anything to say. Just being by your side means everything to me. I’ll always be here for you, through every win and every loss.",
   "I wish you a birthday filled with happiness, success, love, and everything your heart deserves. Happy Birthday 💫💙"
 ];
 
@@ -160,7 +188,7 @@ function showMessage() {
     function typeChar() {
       if (j < lines[i].length) {
         p.textContent += lines[i][j++];
-        box.scrollTop = box.scrollHeight;   // 🔽 auto scroll
+        box.scrollTop = box.scrollHeight;
         setTimeout(typeChar, TYPE_SPEED);
       } else {
         i++;
@@ -172,23 +200,21 @@ function showMessage() {
   nextLine();
 }
 
-/* 🎊 CONFETTI POPPERS */
+/* 🎊 CONFETTI */
 function poppers() {
   const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#c77dff"];
   for (let i = 0; i < 60; i++) {
     const c = document.createElement("div");
     c.className = "confetti";
     c.style.background = colors[Math.floor(Math.random()*colors.length)];
-    c.style.left = "50%";
-    c.style.top = "50%";
-    c.style.setProperty("--cx", (Math.random()*400-200)+"px");
-    c.style.setProperty("--cy", (Math.random()*400-200)+"px");
+    c.style.setProperty("--x", (Math.random()*400-200)+"px");
+    c.style.setProperty("--y", (Math.random()*400-200)+"px");
     document.body.appendChild(c);
     setTimeout(()=>c.remove(),2000);
   }
 }
 
-/* 🎆 REAL CIRCULAR FIREWORKS */
+/* 🎆 FIREWORKS */
 function fireworks() {
   const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#ffffff"];
   const cx = Math.random()*window.innerWidth;
@@ -201,11 +227,23 @@ function fireworks() {
     f.style.background = colors[Math.floor(Math.random()*colors.length)];
     f.style.left = cx + "px";
     f.style.top = cy + "px";
-    f.style.setProperty("--x", Math.cos(angle)*180 + "px");
-    f.style.setProperty("--y", Math.sin(angle)*180 + "px");
+    f.style.setProperty("--dx", Math.cos(angle)*180+"px");
+    f.style.setProperty("--dy", Math.sin(angle)*180+"px");
     document.body.appendChild(f);
     setTimeout(()=>f.remove(),1300);
   }
+}
+
+/* ❤️ FALLING HEARTS & FLOWERS */
+function createFalling() {
+  const emojis = ["❤️","💖","💗","💕","🌸","🌺","🎈"];
+  const el = document.createElement("div");
+  el.className = "falling";
+  el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  el.style.left = Math.random()*100 + "vw";
+  el.style.animationDuration = (4 + Math.random()*3) + "s";
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),7000);
 }
 
 /* 🎉 OPEN CARD */
@@ -218,6 +256,7 @@ function openCard() {
 
   poppers();
   fireworks();
+  setInterval(createFalling, 350);
 
   document.querySelector(".card").style.display = "none";
   document.getElementById("message").style.display = "flex";
