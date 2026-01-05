@@ -46,14 +46,14 @@
     display: none;
     background: white;
     width: 95%;
-    max-width: 650px;     /* EXPANDED WIDTH */
-    padding: 30px;       /* MORE SPACE */
+    max-width: 650px;
+    padding: 30px;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     color: #111;
     line-height: 1.8;
-    max-height: 85dvh;   /* SAFE HEIGHT */
-    overflow-y: auto;   /* SCROLL IF NEEDED */
+    max-height: 85dvh;
+    overflow-y: auto;
   }
 
   h1 {
@@ -98,18 +98,25 @@
 
 <body>
 
+<!-- 🎵 AUDIO (same folder as HTML) -->
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 <div class="card" onclick="openCard()">
-  Tap to Open 🎉
+  🎁 Tap to Open 
 </div>
 
 <div class="message" id="message">
-  <h1>Happy Birthday </h1>
+  <h1>Happy Birthday babyy</h1>
   <div class="cake-symbol">🎂</div>
   <div id="textMessage"></div>
 </div>
 
 <script>
 let opened = false;
+const music = document.getElementById("bgMusic");
 
 const lines = [
   "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life. I truly see you for who you are—the greatest cricket player, the best badminton player, the most sarcastic and funniest guy ever, and the strongest person I know who handles everything with a smile.",
@@ -130,7 +137,7 @@ function showMessage() {
     function typeChar() {
       if (j < lines[i].length) {
         p.textContent += lines[i][j++];
-        box.scrollTop = box.scrollHeight; // AUTO-SCROLL
+        box.scrollTop = box.scrollHeight;
         setTimeout(typeChar, 22);
       } else {
         i++;
@@ -157,6 +164,10 @@ function createFalling() {
 function openCard() {
   if (opened) return;
   opened = true;
+
+  // ▶️ Start music AFTER user interaction
+  music.volume = 0.6;
+  music.play().catch(() => {});
 
   document.querySelector(".card").style.display = "none";
   document.getElementById("message").style.display = "block";
