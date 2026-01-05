@@ -15,7 +15,6 @@
     align-items: center;
     min-height: 100dvh;
     overflow: hidden;
-    -webkit-tap-highlight-color: transparent;
   }
 
   /* 🎁 OPEN CARD */
@@ -31,57 +30,72 @@
     font-size: 1.2rem;
     animation: pulse 1.5s infinite;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    text-align: center;
-    padding: 20px;
     cursor: pointer;
-    user-select: none;
     z-index: 3;
   }
 
   @keyframes pulse {
-    0% { transform: scale(1); }
     50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
   }
 
-  /* 💌 MESSAGE */
+  /* 💌 MESSAGE BOX (FIXED SIZE) */
   .message {
     display: none;
     background: white;
-    width: 95%;
-    max-width: 650px;
-    padding: 24px;
+    width: 90%;
+    max-width: 380px;
+    height: 320px;            /* 🔒 FIXED HEIGHT */
+    padding: 18px;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     color: #111;
-    line-height: 1.8;
-    max-height: 85dvh;
-    overflow-y: auto;
+    line-height: 1.6;
     z-index: 3;
+    display: flex;
+    flex-direction: column;
   }
 
   h1 {
     color: #ff2e63;
     text-align: center;
-    margin-bottom: 10px;
-    animation: glow 1.5s infinite alternate;
-    font-size: 1.8rem;
-  }
-
-  @keyframes glow {
-    from { text-shadow: 0 0 5px #ff9aa2; }
-    to { text-shadow: 0 0 15px #ff4d6d; }
+    font-size: 1.4rem;
+    margin: 5px 0;
   }
 
   .cake-symbol {
-    font-size: 2.5rem;
     text-align: center;
-    margin: 10px 0;
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  /* 📜 SCROLLING MESSAGE AREA */
+  #textMessage {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+    font-size: 0.95rem;
   }
 
   #textMessage p {
-    margin-bottom: 16px;
-    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  /* 🎆 REAL FIREWORKS */
+  .firework {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: firework 1.2s ease-out forwards;
+    z-index: 1;
+  }
+
+  @keyframes firework {
+    to {
+      transform: translate(var(--x), var(--y));
+      opacity: 0;
+    }
   }
 
   /* 🎊 CONFETTI */
@@ -89,59 +103,16 @@
     position: fixed;
     width: 8px;
     height: 8px;
-    top: 50%;
-    left: 50%;
-    animation: confettiFall 1.8s ease-out forwards;
+    animation: confetti 1.8s ease-out forwards;
     pointer-events: none;
     z-index: 1;
   }
 
-  @keyframes confettiFall {
+  @keyframes confetti {
     to {
-      transform: translate(var(--x), var(--y)) rotate(720deg);
+      transform: translate(var(--cx), var(--cy)) rotate(720deg);
       opacity: 0;
     }
-  }
-
-  /* 🎆 FIREWORKS */
-  .firework {
-    position: fixed;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    animation: firework 1.2s ease-out forwards;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  @keyframes firework {
-    to {
-      transform: translate(var(--dx), var(--dy));
-      opacity: 0;
-    }
-  }
-
-  /* ❤️ FALLING EMOJIS */
-  .falling {
-    position: fixed;
-    top: -40px;
-    font-size: 20px;
-    animation: fall linear forwards;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  @keyframes fall {
-    to {
-      transform: translateY(110dvh) rotate(360deg);
-      opacity: 0;
-    }
-  }
-
-  /* 📱 MOBILE TWEAKS */
-  @media (max-width: 480px) {
-    h1 { font-size: 1.5rem; }
-    .card { font-size: 1.1rem; }
   }
 </style>
 </head>
@@ -156,7 +127,7 @@
 <div class="card" onclick="openCard()">🎁 Tap to Open 🎉</div>
 
 <div class="message" id="message">
-  <h1>Happy Birthday babyy</h1>
+  <h1>Happy Birthday 🎂</h1>
   <div class="cake-symbol">🎂</div>
   <div id="textMessage"></div>
 </div>
@@ -170,70 +141,26 @@ const TYPE_SPEED = 55;
 const LINE_DELAY = 1200;
 
 const lines = [
-  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life. I truly see you for who you are—the greatest cricket player, the best badminton player, the most sarcastic and funniest guy ever, and the strongest person I know who handles everything with a smile.",
-  "I love the moments we play games together, sing our favorite songs, and even the quiet times when we don’t have anything to say. Just being by your side, sharing your company, means everything to me. I also love when you come to me after losing a match, complaining and acting like a baby—please never stop coming to me like that. No matter what, I’ll always be here for you, through every win and every loss.",
-  "I wish you a birthday filled with happiness, success, love, and everything your heart deserves. Thank you for being you. Happy Birthday 💫💙"
+  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life.",
+  "I love the moments we play games together, sing our favorite songs, and even the quiet times. No matter what, I’ll always be here for you.",
+  "I wish you a birthday filled with happiness, success, love, and everything your heart deserves. Happy Birthday 💫💙"
 ];
 
-/* 🎊 CONFETTI */
-function poppers() {
-  const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#c77dff"];
-  for (let i = 0; i < 70; i++) {
-    const c = document.createElement("div");
-    c.className = "confetti";
-    c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-    c.style.setProperty("--x", (Math.random()*500-250)+"px");
-    c.style.setProperty("--y", (Math.random()*500-250)+"px");
-    document.body.appendChild(c);
-    setTimeout(() => c.remove(), 2000);
-  }
-}
-
-/* 🎆 FIREWORKS */
-function fireworks() {
-  const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#ffffff"];
-  for (let i = 0; i < 5; i++) {
-    const cx = Math.random() * window.innerWidth;
-    const cy = Math.random() * window.innerHeight * 0.6;
-    for (let j = 0; j < 30; j++) {
-      const f = document.createElement("div");
-      f.className = "firework";
-      f.style.background = colors[Math.floor(Math.random()*colors.length)];
-      f.style.left = cx + "px";
-      f.style.top = cy + "px";
-      f.style.setProperty("--dx", (Math.random()*200-100)+"px");
-      f.style.setProperty("--dy", (Math.random()*200-100)+"px");
-      document.body.appendChild(f);
-      setTimeout(() => f.remove(), 1500);
-    }
-  }
-}
-
-/* ❤️ FALLING */
-function createFalling() {
-  const emojis = ["❤️","💖","🎈","🌸"];
-  const el = document.createElement("div");
-  el.className = "falling";
-  el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-  el.style.left = Math.random()*100+"vw";
-  el.style.animationDuration = (4+Math.random()*3)+"s";
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 7000);
-}
-
-/* ✍️ TYPING */
+/* ✍️ TYPE + AUTO SCROLL */
 function showMessage() {
   const box = document.getElementById("textMessage");
   let i = 0;
+
   function nextLine() {
     if (i >= lines.length) return;
     const p = document.createElement("p");
     box.appendChild(p);
     let j = 0;
+
     function typeChar() {
       if (j < lines[i].length) {
         p.textContent += lines[i][j++];
-        box.scrollTop = box.scrollHeight;
+        box.scrollTop = box.scrollHeight;   // 🔽 auto scroll
         setTimeout(typeChar, TYPE_SPEED);
       } else {
         i++;
@@ -245,7 +172,43 @@ function showMessage() {
   nextLine();
 }
 
-/* 🎉 OPEN */
+/* 🎊 CONFETTI POPPERS */
+function poppers() {
+  const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#c77dff"];
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.left = "50%";
+    c.style.top = "50%";
+    c.style.setProperty("--cx", (Math.random()*400-200)+"px");
+    c.style.setProperty("--cy", (Math.random()*400-200)+"px");
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),2000);
+  }
+}
+
+/* 🎆 REAL CIRCULAR FIREWORKS */
+function fireworks() {
+  const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#ffffff"];
+  const cx = Math.random()*window.innerWidth;
+  const cy = Math.random()*window.innerHeight*0.6;
+
+  for (let i = 0; i < 36; i++) {
+    const angle = (i / 36) * Math.PI * 2;
+    const f = document.createElement("div");
+    f.className = "firework";
+    f.style.background = colors[Math.floor(Math.random()*colors.length)];
+    f.style.left = cx + "px";
+    f.style.top = cy + "px";
+    f.style.setProperty("--x", Math.cos(angle)*180 + "px");
+    f.style.setProperty("--y", Math.sin(angle)*180 + "px");
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1300);
+  }
+}
+
+/* 🎉 OPEN CARD */
 function openCard() {
   if (opened) return;
   opened = true;
@@ -257,10 +220,9 @@ function openCard() {
   fireworks();
 
   document.querySelector(".card").style.display = "none";
-  document.getElementById("message").style.display = "block";
+  document.getElementById("message").style.display = "flex";
 
   showMessage();
-  setInterval(createFalling, 350);
 }
 </script>
 
