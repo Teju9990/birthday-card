@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Happy Birthday Likki 🎉</title>
+<title>Happy Birthday 🎉</title>
 
 <style>
   body {
@@ -46,12 +46,12 @@
     display: none;
     background: white;
     width: 90%;
-    max-width: 420px;
+    max-width: 440px;
     padding: 25px;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    color: #444;
-    line-height: 1.6;
+    color: #111; /* DARK BLACK TEXT */
+    line-height: 1.7;
   }
 
   h1 {
@@ -91,14 +91,12 @@
 
 <body>
 
-<!-- CLOSED CARD -->
-<div class="card" id="card" onclick="openCard()">
+<div class="card" onclick="openCard()">
   🎁 Tap to Open 🎉
 </div>
 
-<!-- OPEN MESSAGE -->
 <div class="message" id="message">
-  <h1>Happy Birthday Babyyyy 🎂</h1>
+  <h1>Happy Birthday 🎂</h1>
   <div class="cake-symbol">🎂</div>
   <div id="textMessage"></div>
 </div>
@@ -107,28 +105,29 @@
 let opened = false;
 
 const lines = [
-  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life.",
-  "I love the moments we share — the laughter, the games, the songs, and even the quiet times. Being with you feels like home.",
-  "May this year bring you happiness, success, and everything your heart deserves. Happy Birthday 💙"
+  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life. I truly see you for who you are—the greatest cricket player, the best badminton player, the most sarcastic and funniest guy ever, and the strongest person I know who handles everything with a smile.",
+  "I love the moments we play games together, sing our favorite songs, and even the quiet times when we don’t have anything to say. Just being by your side, sharing your company, means everything to me. I also love when you come to me after losing a match, complaining and acting like a baby—please never stop coming to me like that. No matter what, I’ll always be here for you, through every win and every loss.",
+  "I wish you a birthday filled with happiness, success, love, and everything your heart deserves. Thank you for being you. Happy Birthday 💫💙"
 ];
 
 function showMessage() {
-  const textMessage = document.getElementById("textMessage");
+  const box = document.getElementById("textMessage");
   let i = 0;
 
   function nextLine() {
     if (i >= lines.length) return;
     const p = document.createElement("p");
-    textMessage.appendChild(p);
+    p.style.color = "#111"; // ENSURE DARK BLACK
+    box.appendChild(p);
     let j = 0;
 
     function typeChar() {
       if (j < lines[i].length) {
         p.textContent += lines[i][j++];
-        setTimeout(typeChar, 25);
+        setTimeout(typeChar, 22);
       } else {
         i++;
-        setTimeout(nextLine, 500);
+        setTimeout(nextLine, 600);
       }
     }
     typeChar();
@@ -152,7 +151,7 @@ function openCard() {
   if (opened) return;
   opened = true;
 
-  document.getElementById("card").style.display = "none";
+  document.querySelector(".card").style.display = "none";
   document.getElementById("message").style.display = "block";
 
   showMessage();
