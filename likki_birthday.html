@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Happy Birthday Likki 🎉</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Comic Sans MS', cursive;
+    background: linear-gradient(to bottom, #ffd1dc, #fff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100dvh;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .card {
+    width: 270px;
+    height: 180px;
+    background: #ff4d6d;
+    color: white;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3rem;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    text-align: center;
+    padding: 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .message {
+    display: none;
+    background: white;
+    width: 90%;
+    max-width: 420px;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    color: #444;
+    line-height: 1.6;
+  }
+
+  h1 {
+    color: #ff2e63;
+    text-align: center;
+    margin-bottom: 15px;
+    animation: glow 1.5s infinite alternate;
+  }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 5px #ff9aa2; }
+    to { text-shadow: 0 0 15px #ff4d6d; }
+  }
+
+  .cake-symbol {
+    font-size: 3rem;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .falling {
+    position: fixed;
+    top: -40px;
+    font-size: 22px;
+    animation: fall linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(110dvh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- CLOSED CARD -->
+<div class="card" id="card" onclick="openCard()">
+  🎁 Tap to Open 🎉
+</div>
+
+<!-- OPEN MESSAGE -->
+<div class="message" id="message">
+  <h1>Happy Birthday Babyyyy 🎂</h1>
+  <div class="cake-symbol">🎂</div>
+  <div id="textMessage"></div>
+</div>
+
+<script>
+let opened = false;
+
+const lines = [
+  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life.",
+  "I love the moments we share — the laughter, the games, the songs, and even the quiet times. Being with you feels like home.",
+  "May this year bring you happiness, success, and everything your heart deserves. Happy Birthday 💙"
+];
+
+function showMessage() {
+  const textMessage = document.getElementById("textMessage");
+  let i = 0;
+
+  function nextLine() {
+    if (i >= lines.length) return;
+    const p = document.createElement("p");
+    textMessage.appendChild(p);
+    let j = 0;
+
+    function typeChar() {
+      if (j < lines[i].length) {
+        p.textContent += lines[i][j++];
+        setTimeout(typeChar, 25);
+      } else {
+        i++;
+        setTimeout(nextLine, 500);
+      }
+    }
+    typeChar();
+  }
+
+  nextLine();
+}
+
+function createFalling() {
+  const emojis = ["❤️","💖","💗","💕","💝","🎈","🌸"];
+  const el = document.createElement("div");
+  el.className = "falling";
+  el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+  el.style.left = Math.random() * 100 + "vw";
+  el.style.animationDuration = (3 + Math.random() * 3) + "s";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}
+
+function openCard() {
+  if (opened) return;
+  opened = true;
+
+  document.getElementById("card").style.display = "none";
+  document.getElementById("message").style.display = "block";
+
+  showMessage();
+  setInterval(createFalling, 300);
+}
+</script>
+
+</body>
+</html>
