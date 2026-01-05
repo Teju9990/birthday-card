@@ -45,13 +45,15 @@
   .message {
     display: none;
     background: white;
-    width: 90%;
-    max-width: 440px;
-    padding: 25px;
+    width: 95%;
+    max-width: 650px;     /* EXPANDED WIDTH */
+    padding: 30px;       /* MORE SPACE */
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    color: #111; /* DARK BLACK TEXT */
-    line-height: 1.7;
+    color: #111;
+    line-height: 1.8;
+    max-height: 85dvh;   /* SAFE HEIGHT */
+    overflow-y: auto;   /* SCROLL IF NEEDED */
   }
 
   h1 {
@@ -70,6 +72,11 @@
     font-size: 3rem;
     text-align: center;
     margin: 20px 0;
+  }
+
+  #textMessage p {
+    margin-bottom: 16px;
+    font-size: 1.05rem;
   }
 
   .falling {
@@ -92,11 +99,11 @@
 <body>
 
 <div class="card" onclick="openCard()">
-  🎁 Tap to Open 🎉
+  Tap to Open 🎉
 </div>
 
 <div class="message" id="message">
-  <h1>Happy Birthday 🎂</h1>
+  <h1>Happy Birthday </h1>
   <div class="cake-symbol">🎂</div>
   <div id="textMessage"></div>
 </div>
@@ -117,13 +124,13 @@ function showMessage() {
   function nextLine() {
     if (i >= lines.length) return;
     const p = document.createElement("p");
-    p.style.color = "#111"; // ENSURE DARK BLACK
     box.appendChild(p);
     let j = 0;
 
     function typeChar() {
       if (j < lines[i].length) {
         p.textContent += lines[i][j++];
+        box.scrollTop = box.scrollHeight; // AUTO-SCROLL
         setTimeout(typeChar, 22);
       } else {
         i++;
