@@ -31,18 +31,18 @@
     animation: pulse 1.5s infinite;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     cursor: pointer;
+    z-index: 3;
     text-align: center;
     padding: 20px;
-    z-index: 3;
   }
 
   @keyframes pulse {
     50% { transform: scale(1.05); }
   }
 
-  /* 💌 MESSAGE BOX — HIDDEN INITIALLY */
+  /* 💌 MESSAGE CARD */
   .message {
-    display: none;               /* ✅ important */
+    display: none;
     background: white;
     width: 90%;
     max-width: 380px;
@@ -52,9 +52,8 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     color: #111;
     z-index: 3;
-
-    flex-direction: column;      /* layout ready */
-    overflow: hidden;            /* never expand */
+    flex-direction: column;
+    overflow: hidden;
   }
 
   h1 {
@@ -70,7 +69,6 @@
     margin-bottom: 6px;
   }
 
-  /* 📜 SCROLLING MESSAGE AREA */
   #textMessage {
     flex: 1;
     overflow-y: auto;
@@ -81,6 +79,24 @@
 
   #textMessage p {
     margin-bottom: 12px;
+  }
+
+  /* 🎆 FIREWORK PARTICLES */
+  .firework {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: firework 1.4s ease-out forwards;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes firework {
+    to {
+      transform: translate(var(--dx), var(--dy));
+      opacity: 0;
+    }
   }
 
   /* 🎊 CONFETTI */
@@ -102,25 +118,7 @@
     }
   }
 
-  /* 🎆 REAL CIRCULAR FIREWORKS */
-  .firework {
-    position: fixed;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    animation: firework 1.2s ease-out forwards;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  @keyframes firework {
-    to {
-      transform: translate(var(--dx), var(--dy));
-      opacity: 0;
-    }
-  }
-
-  /* ❤️ FALLING HEARTS & FLOWERS */
+  /* ❤️ HEARTS & FLOWERS */
   .falling {
     position: fixed;
     top: -40px;
@@ -137,29 +135,22 @@
     }
   }
 
-  /* 📱 MOBILE */
   @media (max-width: 480px) {
     .message { height: 300px; }
-    h1 { font-size: 1.3rem; }
   }
 </style>
 </head>
 
 <body>
 
-<!-- 🎵 MUSIC -->
 <audio id="bgMusic" loop>
   <source src="music.mp3" type="audio/mpeg">
 </audio>
 
-<!-- 🎁 OPEN CARD -->
-<div class="card" id="openCard" onclick="openCard()">
-  🎁 Tap to Open 🎉
-</div>
+<div class="card" id="openCard" onclick="openCard()">🎁 Tap to Open 🎉</div>
 
-<!-- 💌 MESSAGE CARD -->
 <div class="message" id="message">
-  <h1>Happy Birthday babyy</h1>
+  <h1>Happy Birthday 🎂</h1>
   <div class="cake-symbol">🎂</div>
   <div id="textMessage"></div>
 </div>
@@ -168,27 +159,25 @@
 let opened = false;
 const music = document.getElementById("bgMusic");
 
-/* ⏳ Typing speed */
+/* ⏳ Typing */
 const TYPE_SPEED = 55;
 const LINE_DELAY = 1200;
 
 const lines = [
-  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life. I truly see you for who you are—the greatest cricket player, the best badminton player, the most sarcastic and funniest guy ever, and the strongest person I know who handles everything with a smile.",
-  "I love the moments we play games together, sing our favorite songs, and even the quiet times when we don’t have anything to say. Just being by your side means everything to me. I’ll always be here for you, through every win and every loss.",
-  "I wish you a birthday filled with happiness, success, love, and everything your heart deserves. Happy Birthday nanna💫💙"
+  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life.",
+  "I love the moments we play games together, sing our favorite songs, and even the quiet times.",
+  "I wish you a birthday filled with happiness, success, love, and everything your heart deserves. 💫💙"
 ];
 
-/* ✍️ TYPE + AUTO SCROLL */
+/* ✍️ Typing */
 function showMessage() {
   const box = document.getElementById("textMessage");
   let i = 0;
-
   function nextLine() {
     if (i >= lines.length) return;
     const p = document.createElement("p");
     box.appendChild(p);
     let j = 0;
-
     function typeChar() {
       if (j < lines[i].length) {
         p.textContent += lines[i][j++];
@@ -204,7 +193,35 @@ function showMessage() {
   nextLine();
 }
 
-/* 🎊 CONFETTI */
+/* 🎆 NATURAL FIREWORK (random position) */
+function launchFirework() {
+  const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#ffffff"];
+  const cx = Math.random() * window.innerWidth;
+  const cy = Math.random() * window.innerHeight;
+
+  for (let i = 0; i < 36; i++) {
+    const angle = (i / 36) * Math.PI * 2;
+    const f = document.createElement("div");
+    f.className = "firework";
+    f.style.background = colors[Math.floor(Math.random()*colors.length)];
+    f.style.left = cx + "px";
+    f.style.top = cy + "px";
+    f.style.setProperty("--dx", Math.cos(angle)*180 + "px");
+    f.style.setProperty("--dy", Math.sin(angle)*180 + "px");
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1500);
+  }
+}
+
+/* 🔁 CONTINUOUS RANDOM FIREWORKS (NO TIMELINE) */
+function fireworkLoop() {
+  if (opened && Math.random() < 0.035) {   // random chance per frame
+    launchFirework();
+  }
+  requestAnimationFrame(fireworkLoop);
+}
+
+/* 🎊 Confetti */
 function poppers() {
   const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#c77dff"];
   for (let i = 0; i < 60; i++) {
@@ -218,27 +235,7 @@ function poppers() {
   }
 }
 
-/* 🎆 FIREWORKS */
-function fireworks() {
-  const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#ffffff"];
-  const cx = Math.random()*window.innerWidth;
-  const cy = Math.random()*window.innerHeight*0.6;
-
-  for (let i = 0; i < 36; i++) {
-    const angle = (i / 36) * Math.PI * 2;
-    const f = document.createElement("div");
-    f.className = "firework";
-    f.style.background = colors[Math.floor(Math.random()*colors.length)];
-    f.style.left = cx + "px";
-    f.style.top = cy + "px";
-    f.style.setProperty("--dx", Math.cos(angle)*180+"px");
-    f.style.setProperty("--dy", Math.sin(angle)*180+"px");
-    document.body.appendChild(f);
-    setTimeout(()=>f.remove(),1300);
-  }
-}
-
-/* ❤️ FALLING HEARTS & FLOWERS */
+/* ❤️ Hearts & Flowers */
 function createFalling() {
   const emojis = ["❤️","💖","💗","💕","🌸","🌺","🎈"];
   const el = document.createElement("div");
@@ -250,7 +247,7 @@ function createFalling() {
   setTimeout(()=>el.remove(),7000);
 }
 
-/* 🎉 OPEN CARD */
+/* 🎉 Open */
 function openCard() {
   if (opened) return;
   opened = true;
@@ -259,7 +256,6 @@ function openCard() {
   music.play().catch(()=>{});
 
   poppers();
-  fireworks();
   setInterval(createFalling, 350);
 
   document.getElementById("openCard").style.display = "none";
@@ -267,8 +263,10 @@ function openCard() {
 
   showMessage();
 }
+
+/* start background loop */
+fireworkLoop();
 </script>
 
 </body>
 </html>
-
