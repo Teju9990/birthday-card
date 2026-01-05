@@ -34,6 +34,7 @@
     padding: 20px;
     cursor: pointer;
     user-select: none;
+    z-index: 2;
   }
 
   @keyframes pulse {
@@ -54,6 +55,7 @@
     line-height: 1.8;
     max-height: 85dvh;
     overflow-y: auto;
+    z-index: 2;
   }
 
   h1 {
@@ -79,6 +81,31 @@
     font-size: 1.05rem;
   }
 
+  /* 🎊 CONFETTI */
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: red;
+    top: 50%;
+    left: 50%;
+    animation: confettiFall 1.8s ease-out forwards;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes confettiFall {
+    0% {
+      transform: translate(0, 0) rotate(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(var(--x), var(--y)) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  /* ❤️ FALLING EMOJIS */
   .falling {
     position: fixed;
     top: -40px;
@@ -98,10 +125,9 @@
 
 <body>
 
-<!-- 🎵 AUDIO (same folder as HTML) -->
+<!-- 🎵 Background Music -->
 <audio id="bgMusic" loop>
   <source src="music.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
 </audio>
 
 <div class="card" onclick="openCard()">
@@ -118,11 +144,29 @@
 let opened = false;
 const music = document.getElementById("bgMusic");
 
+/* ⏳ Typing Speed */
+const TYPE_SPEED = 55;
+const LINE_DELAY = 1200;
+
 const lines = [
   "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life. I truly see you for who you are—the greatest cricket player, the best badminton player, the most sarcastic and funniest guy ever, and the strongest person I know who handles everything with a smile.",
   "I love the moments we play games together, sing our favorite songs, and even the quiet times when we don’t have anything to say. Just being by your side, sharing your company, means everything to me. I also love when you come to me after losing a match, complaining and acting like a baby—please never stop coming to me like that. No matter what, I’ll always be here for you, through every win and every loss.",
   "I wish you a birthday filled with happiness, success, love, and everything your heart deserves. Thank you for being you. Happy Birthday 💫💙"
 ];
+
+/* 🎊 CONFETTI BURST */
+function poppers() {
+  const colors = ["#ff4d6d", "#ffd166", "#06d6a0", "#4cc9f0", "#c77dff"];
+  for (let i = 0; i < 80; i++) {
+    const confetti = document.createElement("div");
+    confetti.className = "confetti";
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.setProperty("--x", (Math.random() * 600 - 300) + "px");
+    confetti.style.setProperty("--y", (Math.random() * 600 - 300) + "px");
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 2000);
+  }
+}
 
 function showMessage() {
   const box = document.getElementById("textMessage");
@@ -138,10 +182,10 @@ function showMessage() {
       if (j < lines[i].length) {
         p.textContent += lines[i][j++];
         box.scrollTop = box.scrollHeight;
-        setTimeout(typeChar, 22);
+        setTimeout(typeChar, TYPE_SPEED);
       } else {
         i++;
-        setTimeout(nextLine, 600);
+        setTimeout(nextLine, LINE_DELAY);
       }
     }
     typeChar();
@@ -165,9 +209,12 @@ function openCard() {
   if (opened) return;
   opened = true;
 
-  // ▶️ Start music AFTER user interaction
+  // 🎵 Play music
   music.volume = 0.6;
   music.play().catch(() => {});
+
+  // 🎊 Popper burst
+  poppers();
 
   document.querySelector(".card").style.display = "none";
   document.getElementById("message").style.display = "block";
