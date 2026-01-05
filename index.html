@@ -69,6 +69,7 @@
     margin-bottom: 6px;
   }
 
+  /* 📜 SCROLLING MESSAGE AREA */
   #textMessage {
     flex: 1;
     overflow-y: auto;
@@ -143,14 +144,17 @@
 
 <body>
 
+<!-- 🎵 MUSIC -->
 <audio id="bgMusic" loop>
   <source src="music.mp3" type="audio/mpeg">
 </audio>
 
+<!-- 🎁 OPEN CARD -->
 <div class="card" id="openCard" onclick="openCard()">🎁 Tap to Open 🎉</div>
 
+<!-- 💌 MESSAGE CARD -->
 <div class="message" id="message">
-  <h1>Happy Birthday 🎂</h1>
+  <h1>Happy Birthday babyy</h1>
   <div class="cake-symbol">🎂</div>
   <div id="textMessage"></div>
 </div>
@@ -159,25 +163,29 @@
 let opened = false;
 const music = document.getElementById("bgMusic");
 
-/* ⏳ Typing */
+/* ⏳ Typing speed */
 const TYPE_SPEED = 55;
 const LINE_DELAY = 1200;
 
+/* 💬 YOUR UPDATED MESSAGE */
 const lines = [
-  "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life.",
-  "I love the moments we play games together, sing our favorite songs, and even the quiet times.",
-  "I wish you a birthday filled with happiness, success, love, and everything your heart deserves. 💫💙"
+   "This past year has been beautiful, and it’s all because of you. You’ve made me stronger, braver, and happier just by being in my life. I truly see you for who you are—the greatest cricket player, the best badminton player, the most sarcastic and funniest guy ever, and the strongest person I know who handles everything with a smile.",
+  "I love the moments we play games together, sing our favorite songs, and even the quiet times when we don’t have anything to say. Just being by your side, sharing your company, means everything to me. I also love when you come to me after losing a match, complaining and acting like a baby—please never stop coming to me like that. No matter what, I’ll always be here for you, through every win and every loss.",
+  "I wish you a birthday filled with happiness, success, love, and everything your heart deserves. Thank you for being you. Happy Birthday 💫💙"
+
 ];
 
-/* ✍️ Typing */
+/* ✍️ TYPE + AUTO SCROLL */
 function showMessage() {
   const box = document.getElementById("textMessage");
   let i = 0;
+
   function nextLine() {
     if (i >= lines.length) return;
     const p = document.createElement("p");
     box.appendChild(p);
     let j = 0;
+
     function typeChar() {
       if (j < lines[i].length) {
         p.textContent += lines[i][j++];
@@ -193,7 +201,7 @@ function showMessage() {
   nextLine();
 }
 
-/* 🎆 NATURAL FIREWORK (random position) */
+/* 🎆 NATURAL FIREWORK */
 function launchFirework() {
   const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#ffffff"];
   const cx = Math.random() * window.innerWidth;
@@ -213,15 +221,15 @@ function launchFirework() {
   }
 }
 
-/* 🔁 CONTINUOUS RANDOM FIREWORKS (NO TIMELINE) */
+/* 🔁 CONTINUOUS RANDOM FIREWORKS */
 function fireworkLoop() {
-  if (opened && Math.random() < 0.035) {   // random chance per frame
+  if (opened && Math.random() < 0.035) {
     launchFirework();
   }
   requestAnimationFrame(fireworkLoop);
 }
 
-/* 🎊 Confetti */
+/* 🎊 CONFETTI */
 function poppers() {
   const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#c77dff"];
   for (let i = 0; i < 60; i++) {
@@ -235,7 +243,7 @@ function poppers() {
   }
 }
 
-/* ❤️ Hearts & Flowers */
+/* ❤️ HEARTS & FLOWERS */
 function createFalling() {
   const emojis = ["❤️","💖","💗","💕","🌸","🌺","🎈"];
   const el = document.createElement("div");
@@ -247,7 +255,7 @@ function createFalling() {
   setTimeout(()=>el.remove(),7000);
 }
 
-/* 🎉 Open */
+/* 🎉 OPEN CARD */
 function openCard() {
   if (opened) return;
   opened = true;
@@ -264,7 +272,7 @@ function openCard() {
   showMessage();
 }
 
-/* start background loop */
+/* start fireworks */
 fireworkLoop();
 </script>
 
