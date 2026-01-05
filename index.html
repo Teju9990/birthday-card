@@ -31,30 +31,30 @@
     animation: pulse 1.5s infinite;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     cursor: pointer;
-    z-index: 3;
     text-align: center;
     padding: 20px;
+    z-index: 3;
   }
 
   @keyframes pulse {
     50% { transform: scale(1.05); }
   }
 
-  /* 💌 MESSAGE BOX — FIXED SIZE */
+  /* 💌 MESSAGE BOX — HIDDEN INITIALLY */
   .message {
-    display: none;
+    display: none;               /* ✅ important */
     background: white;
     width: 90%;
     max-width: 380px;
-    height: 320px;                /* 🔒 stays small */
+    height: 320px;
     padding: 16px;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     color: #111;
     z-index: 3;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;             /* 🚫 no extension */
+
+    flex-direction: column;      /* layout ready */
+    overflow: hidden;            /* never expand */
   }
 
   h1 {
@@ -152,8 +152,12 @@
   <source src="music.mp3" type="audio/mpeg">
 </audio>
 
-<div class="card" onclick="openCard()">🎁 Tap to Open 🎉</div>
+<!-- 🎁 OPEN CARD -->
+<div class="card" id="openCard" onclick="openCard()">
+  🎁 Tap to Open 🎉
+</div>
 
+<!-- 💌 MESSAGE CARD -->
 <div class="message" id="message">
   <h1>Happy Birthday 🎂</h1>
   <div class="cake-symbol">🎂</div>
@@ -258,7 +262,7 @@ function openCard() {
   fireworks();
   setInterval(createFalling, 350);
 
-  document.querySelector(".card").style.display = "none";
+  document.getElementById("openCard").style.display = "none";
   document.getElementById("message").style.display = "flex";
 
   showMessage();
